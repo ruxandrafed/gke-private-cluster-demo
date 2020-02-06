@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 provider "google" {
+  credentials = file("credentials.json")
   version = "~> 2.12.0"
   project = var.project
   region  = var.region
@@ -22,6 +23,7 @@ provider "google" {
 }
 
 provider "google-beta" {
+  credentials = file("credentials.json")
   version = "~> 2.12.0"
   project = var.project
   region  = var.region

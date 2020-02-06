@@ -20,36 +20,36 @@ output "cluster_name" {
   value       = google_container_cluster.cluster.name
 }
 
-// Current GCP project
-output "gcp_serviceaccount" {
-  description = "The email/name of the GCP service account"
-  value       = google_service_account.access_postgres.email
-}
+# // Current GCP project
+# output "gcp_serviceaccount" {
+#   description = "The email/name of the GCP service account"
+#   value       = google_service_account.access_postgres.email
+# }
 
-// Used when setting up the GKE cluster to talk to Postgres.
-output "postgres_instance" {
-  description = "The generated name of the Cloud SQL instance"
-  value       = google_sql_database_instance.default.name
-}
+# // Used when setting up the GKE cluster to talk to Postgres.
+# output "postgres_instance" {
+#   description = "The generated name of the Cloud SQL instance"
+#   value       = google_sql_database_instance.default.name
+# }
 
-// Full connection string for the Postgres DB>
-output "postgres_connection" {
-  description = "The connection string dynamically generated for storage inside the Kubernetes configmap"
-  value       = format("%s:%s:%s", data.google_client_config.current.project, var.region, google_sql_database_instance.default.name)
-}
+# // Full connection string for the Postgres DB>
+# output "postgres_connection" {
+#   description = "The connection string dynamically generated for storage inside the Kubernetes configmap"
+#   value       = format("%s:%s:%s", data.google_client_config.current.project, var.region, google_sql_database_instance.default.name)
+# }
 
-// Postgres DB username.
-output "postgres_user" {
-  description = "The Cloud SQL Instance User name"
-  value       = google_sql_user.default.name
-}
+# // Postgres DB username.
+# output "postgres_user" {
+#   description = "The Cloud SQL Instance User name"
+#   value       = google_sql_user.default.name
+# }
 
-// Postgres DB password.
-output "postgres_pass" {
-  sensitive   = true
-  description = "The Cloud SQL Instance Password (Generated)"
-  value       = google_sql_user.default.password
-}
+# // Postgres DB password.
+# output "postgres_pass" {
+#   sensitive   = true
+#   description = "The Cloud SQL Instance Password (Generated)"
+#   value       = google_sql_user.default.password
+# }
 
 output "cluster_endpoint" {
   description = "Cluster endpoint"

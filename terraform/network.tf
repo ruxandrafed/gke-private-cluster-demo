@@ -56,7 +56,7 @@ resource "google_compute_network" "network" {
   auto_create_subnetworks = false
 
   depends_on = [
-    "google_project_service.service",
+    google_project_service.service,
   ]
 }
 
@@ -87,7 +87,7 @@ resource "google_compute_address" "nat" {
   region  = var.region
 
   depends_on = [
-    "google_project_service.service",
+    google_project_service.service,
   ]
 }
 
@@ -138,6 +138,14 @@ resource "google_service_account" "bastion" {
   display_name = "GKE Bastion SA"
 }
 
+// Add the service account to the project
+resource "google_project_iam_member" "service-account-bastion" {
+  count   = length(var.service_account_iam_roles_bastion)
+  project = var.project
+  role    = element(var.service_account_iam_roles_bastion, count.index)
+  member  = format("serviceAccount:%s", google_service_account.bastion.email)
+}
+
 // Allow access to the Bastion Host via SSH
 resource "google_compute_firewall" "bastion-ssh" {
   name          = format("%s-bastion-ssh", var.cluster_name)
@@ -158,7 +166,13 @@ resource "google_compute_firewall" "bastion-ssh" {
 data "template_file" "startup_script" {
   template = <<-EOF
   sudo apt-get update -y
-  sudo apt-get install -y tinyproxy
+  sudo apt-get install -y tinyproxy apt-transport-https
+  // Install kubectl
+  sudo apt-get install -y apt-transport-https
+  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+  echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+  sudo apt-get update
+  sudo apt-get install -y kubectl
   EOF
 
 }

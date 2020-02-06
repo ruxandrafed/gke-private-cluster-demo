@@ -17,53 +17,53 @@ limitations under the License.
 // Required values to be set in terraform.tfvars
 variable "project" {
   description = "The project in which to hold the components"
-  type        = "string"
+  type        = string
 }
 
 variable "region" {
   description = "The region in which to create the VPC network"
-  type        = "string"
+  type        = string
 }
 
 variable "zone" {
   description = "The zone in which to create the Kubernetes cluster. Must match the region"
-  type        = "string"
+  type        = string
 }
 
 
 // Optional values that can be overridden or appended to if desired.
 variable "cluster_name" {
   description = "The name to give the new Kubernetes cluster."
-  type        = "string"
+  type        = string
   default     = "private-cluster"
 }
 
 variable "bastion_tags" {
   description = "A list of tags applied to your bastion instance."
-  type        = "list"
+  type        = list
   default     = ["bastion"]
 }
 
 variable "k8s_namespace" {
   description = "The namespace to use for the deployment and workload identity binding"
-  type        = "string"
+  type        = string
   default     = "default"
 }
 
-variable "k8s_sa_name" {
-  description = "The k8s service account name to use for the deployment and workload identity binding"
-  type        = "string"
-  default     = "postgres"
-}
+# variable "k8s_sa_name" {
+#   description = "The k8s service account name to use for the deployment and workload identity binding"
+#   type        = string
+#   default     = "postgres"
+# }
 
-variable "db_username" {
-  description = "The name for the DB connection"
-  type        = "string"
-  default     = "postgres"
-}
+# variable "db_username" {
+#   description = "The name for the DB connection"
+#   type        = string
+#   default     = "postgres"
+# }
 
 variable "service_account_iam_roles" {
-  type = "list"
+  type = list
 
   default = [
     "roles/logging.logWriter",
@@ -76,8 +76,23 @@ variable "service_account_iam_roles" {
   EOF
 }
 
+variable "service_account_iam_roles_bastion" {
+  type = list
+
+  default = [
+    "roles/logging.logWriter",
+    "roles/monitoring.metricWriter",
+    "roles/monitoring.viewer",
+    "roles/container.developer"
+  ]
+  description = <<-EOF
+  List of the default IAM roles to attach to the service account on the
+  GKE Nodes.
+  EOF
+}
+
 variable "service_account_custom_iam_roles" {
-  type = "list"
+  type = list
   default = []
 
   description = <<-EOF
@@ -87,7 +102,7 @@ variable "service_account_custom_iam_roles" {
 }
 
 variable "project_services" {
-  type = "list"
+  type = list
 
   default = [
     "cloudresourcemanager.googleapis.com",
@@ -97,7 +112,7 @@ variable "project_services" {
     "iam.googleapis.com",
     "logging.googleapis.com",
     "monitoring.googleapis.com",
-    "sqladmin.googleapis.com",
+    # "sqladmin.googleapis.com",
     "securetoken.googleapis.com",
   ]
   description = <<-EOF

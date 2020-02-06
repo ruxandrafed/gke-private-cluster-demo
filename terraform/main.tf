@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 resource "google_container_cluster" "cluster" {
-  provider = "google-beta"
+  provider = google-beta
 
   name     = var.cluster_name
   project  = var.project
@@ -99,20 +99,43 @@ resource "google_container_cluster" "cluster" {
   }
 
   depends_on = [
-    "google_project_service.service",
-    "google_project_iam_member.service-account",
-    "google_project_iam_member.service-account-custom",
-    "google_compute_router_nat.nat",
+    google_project_service.service,
+    google_project_iam_member.service-account,
+    google_project_iam_member.service-account-custom,
+    google_compute_router_nat.nat,
   ]
 
 }
+
+# data "template_file" "kubeconfig" {
+#   template = file("${path.module}/kubeconfig-template.yaml")
+
+#   vars = {
+#     cluster_name    = google_container_cluster.cluster.name
+#     user_name       = google_container_cluster.cluster.master_auth[0].username
+#     user_password   = google_container_cluster.cluster.master_auth[0].password
+#     endpoint        = google_container_cluster.cluster.endpoint
+#     cluster_ca      = google_container_cluster.cluster.master_auth[0].cluster_ca_certificate
+#     client_cert     = google_container_cluster.cluster.master_auth[0].client_certificate
+#     client_cert_key = google_container_cluster.cluster.master_auth[0].client_key
+#   }
+# }
+
+# resource "local_file" "kubeconfig" {
+#   content  = data.template_file.kubeconfig.rendered
+#   filename = "${path.module}/kubeconfig"
+# }
+
+# output "kubeconfig_path" {
+#   value = local_file.kubeconfig.filename
+# }
 
 // A dedicated/separate node pool where workloads will run.  A regional node pool
 // will have "node_count" nodes per zone, and will use 3 zones.  This node pool
 // will be 3 nodes in size and use a non-default service-account with minimal
 // Oauth scope permissions.
 resource "google_container_node_pool" "private-np-1" {
-  provider = "google-beta"
+  provider = google-beta
 
   name       = "private-np-1"
   location   = var.region
@@ -162,6 +185,6 @@ resource "google_container_node_pool" "private-np-1" {
   }
 
   depends_on = [
-    "google_container_cluster.cluster",
+    google_container_cluster.cluster,
   ]
 }
